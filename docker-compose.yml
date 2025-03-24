@@ -1,0 +1,21 @@
+version: '3.0'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "5056:80"
+    container_name: app-mp-calc-api
+    networks:
+      - personal-network
+    volumes:
+      - mpcalc-volume:/App/data
+
+networks:
+  personal-network:
+    external: true
+
+volumes:
+  mpcalc-volume:
+    external: true

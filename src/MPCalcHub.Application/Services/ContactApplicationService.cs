@@ -1,8 +1,11 @@
+using System.Text.Json;
 using AutoMapper;
 using MPCalcHub.Application.DataTransferObjects;
 using MPCalcHub.Application.Interfaces;
+using MPCalcHub.Domain.Constants;
 using MPCalcHub.Domain.Interfaces;
 using EN = MPCalcHub.Domain.Entities;
+using MSG = MPCalcHub.Application.DataTransferObjects.MessageBrokers;
 
 namespace MPCalcHub.Application.Services;
 
@@ -11,7 +14,7 @@ public class ContactApplicationService(IContactService contactService, IMapper m
     private readonly IContactService _contactService = contactService;
     private readonly IMapper _mapper = mapper;
 
-    public async Task<Contact> Add(BasicContact model)
+    public async Task<Contact> Add(MSG.BasicContact model)
     {
         var contact = _mapper.Map<EN.Contact>(model);
 
@@ -20,9 +23,9 @@ public class ContactApplicationService(IContactService contactService, IMapper m
         return _mapper.Map<Contact>(contact);
     }
 
-    public async Task<Contact> Update(Contact model)
+    public async Task<Contact> Update(MSG.Contact model)
     {
-        var contact = await _contactService.GetById(model.Id.Value, include: false, tracking: true);
+        var contact = await _contactService.GetById(model.Id, include: false, tracking: true);
         if (contact == null)
             throw new Exception("O contato não existe.");
             
@@ -48,5 +51,28 @@ public class ContactApplicationService(IContactService contactService, IMapper m
     public async Task Remove(Guid id)
     {
         await _contactService.Remove(id);
+    }
+
+    public async Task Consumer(string message, string rountingKey)
+    {
+        switch(rountingKey)
+        {
+            case AppConstants.Routes.RabbitMQ.ContactInsert:
+                var contactInsert = JsonSerializer.Deserialize<MSG.BasicContact>(message);
+                await Add(contactInsert);
+                break;
+
+            case AppConstants.Routes.RabbitMQ.ContactUpdate:
+                var contactUpdate = JsonSerializer.Deserialize<MSG.Contact>(message);
+                await Update(contactUpdate);
+                break;
+        }
+    }
+
+    public void Dispose()
+    {
+        _contactService.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

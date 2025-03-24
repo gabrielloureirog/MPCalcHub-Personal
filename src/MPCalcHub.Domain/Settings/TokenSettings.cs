@@ -1,4 +1,4 @@
-namespace MPCalcHub.Domain.Options;
+namespace MPCalcHub.Domain.Settings;
 
 public class TokenSettings
 {

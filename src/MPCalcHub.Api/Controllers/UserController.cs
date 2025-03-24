@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MPCalcHub.Application.Interfaces;
 using MPCalcHub.Application.DataTransferObjects;
 using Microsoft.AspNetCore.Authorization;
-using static MPCalcHub.Api.Constants.AppConstants;
+using static MPCalcHub.Domain.Constants.AppConstants;
 
 namespace MPCalcHub.Api.Controllers;
 

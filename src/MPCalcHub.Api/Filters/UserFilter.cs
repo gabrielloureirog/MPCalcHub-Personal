@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Options;
 using MPCalcHub.Application.Interfaces;
 using MPCalcHub.Domain.Entities;
-using MPCalcHub.Domain.Options;
+using MPCalcHub.Domain.Settings;
 using MPCalcHub.Infrastructure.Helper;
 
 namespace MPCalcHub.Api.Filters;

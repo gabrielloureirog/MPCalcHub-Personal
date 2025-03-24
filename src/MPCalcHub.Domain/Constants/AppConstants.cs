@@ -1,4 +1,4 @@
-namespace MPCalcHub.Api.Constants;
+namespace MPCalcHub.Domain.Constants;
 
 public class AppConstants
 {
@@ -10,5 +10,14 @@ public class AppConstants
         public const string SuperOrGuest = "SuperOrGuest";
         public const string Guest = "Guest";
         public const string Banned = "Banned";
+    }
+
+    public static class Routes
+    {
+        public static class RabbitMQ
+        {
+            public const string ContactInsert = "contact.insert";
+            public const string ContactUpdate = "contact.update";
+        }
     }
 }

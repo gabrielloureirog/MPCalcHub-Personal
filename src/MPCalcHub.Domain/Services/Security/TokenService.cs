@@ -7,7 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MPCalcHub.Domain.Entities;
 using MPCalcHub.Domain.Interfaces.Security;
-using MPCalcHub.Domain.Options;
+using MPCalcHub.Domain.Settings;
 
 namespace MPCalcHub.Domain.Services.Security;
 

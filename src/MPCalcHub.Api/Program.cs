@@ -19,16 +19,17 @@ using MPCalcHub.Application.Services;
 using MPCalcHub.Domain.Enums;
 using MPCalcHub.Application.Authorization;
 using Microsoft.AspNetCore.Authorization;
-using static MPCalcHub.Api.Constants.AppConstants;
+using static MPCalcHub.Domain.Constants.AppConstants;
 using MPCalcHub.Application.DataTransferObjects;
 using MPCalcHub.Infrastructure.Security;
 using MPCalcHub.Domain.Interfaces.Security;
 using MPCalcHub.Domain.Services.Security;
-using MPCalcHub.Domain.Options;
+using MPCalcHub.Domain.Settings;
 using MPCalcHub.Domain.Entities;
 using MPCalcHub.Api.Filters;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Prometheus;
+using MPCalcHub.Api.Robots.RabbitMQ;
 
 var builder = WebApplication.CreateBuilder(args);
 var env = builder.Environment;
@@ -41,11 +42,11 @@ builder.Configuration
     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-var jwtKeyConfig = builder.Configuration["JWT:Key"];
+var jwtKeyConfig = builder.Configuration["Token:Key"];
 if (string.IsNullOrEmpty(jwtKeyConfig))
-    throw new InvalidOperationException("JWT:Key configuration is missing or empty.");
+    throw new InvalidOperationException("Token:Key configuration is missing or empty.");
 
-builder.Services.Configure<TokenSettings>(builder.Configuration.GetSection("JWT"));
+builder.Services.Configure<MPCalcHubSettings>(builder.Configuration);
 builder.WebHost.UseUrls("https://0.0.0.0:5056");
 
 builder.Services.AddAuthentication(o =>
@@ -190,6 +191,12 @@ builder.Services.AddSingleton<IAuthorizationHandler, RolesAuthorizationHandler>(
 
 builder.Services.AddScoped<IAuthorizationFilter, UserFilter>();
 builder.Services.AddScoped(x => new UserData());
+
+#endregion
+
+#region RabbitMQConsumers
+
+builder.Services.AddHostedService<ContactConsumerService>();
 
 #endregion
 
