@@ -38,4 +38,4 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/mpcalchub:latest
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/mpcalchub-personal:latest
