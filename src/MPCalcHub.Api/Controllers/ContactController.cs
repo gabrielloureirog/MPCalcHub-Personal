@@ -15,6 +15,28 @@ namespace MPCalcHub.Api.Controllers
         private readonly IContactApplicationService _contactApplicationService = contactApplicationService;
 
         /// <summary>
+        /// Criar um novo contato
+        /// </summary>
+        /// <param name="model">Objeto com as propriedades para criar um novo contato</param>
+        /// <returns>Um objeto do contato criado</returns>
+        [HttpPost]
+        [Authorize(Policy = Policies.SuperOrModerator)]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
+        public async Task<object> Create([FromBody] BasicContact model)
+        {
+            try
+            {
+                var contact = await _contactApplicationService.Add(model);
+                return Ok(contact);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        /// <summary>
         /// Buscar contatos por DDD
         /// </summary>
         /// <param name="ddd">DDD para busca de contatos</param>
@@ -37,20 +59,20 @@ namespace MPCalcHub.Api.Controllers
         }
 
         /// <summary>
-        /// Excluir um contato pelo Id
+        /// Editar um contato
         /// </summary>
-        /// <param name="id">Id do contato</param>
-        /// <returns>Contato excluído com sucesso</returns>
-        [HttpDelete, Route("{id}")]
+        /// <param name="model">Objeto com as propriedades para editar um contato</param>
+        /// <returns>Um objeto do contato criado</returns>
+        [HttpPut]
         [Authorize(Policy = Policies.SuperOrModerator)]
         [Produces("application/json")]
         [ProducesResponseType(typeof(Contact), StatusCodes.Status200OK)]
-        public async Task<object> Delete([FromRoute] Guid id)
+        public async Task<object> Update([FromBody] Contact model)
         {
             try
             {
-                await _contactApplicationService.Remove(id);
-                return Accepted();
+                var contact = await _contactApplicationService.Update(model);
+                return Ok(contact);
             }
             catch (Exception ex)
             {
