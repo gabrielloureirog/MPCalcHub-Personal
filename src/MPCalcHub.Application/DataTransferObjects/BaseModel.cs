@@ -10,8 +10,8 @@ public class BaseModel : Identifier
     [JsonPropertyName("created_by")]
     public Guid CreatedBy { get; set; }
 
-    [JsonPropertyName("removed")]
-    public bool Removed { get; set; }
+    [JsonPropertyName("removed")] 
+    public bool Removed { get; set; } 
 
     [JsonPropertyName("updated_at")]
     public DateTime? UpdatedAt { get; set; }
