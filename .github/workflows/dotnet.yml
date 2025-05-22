@@ -1,41 +1,44 @@
-name: .NET
+name: .NET CI/CD
 
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 8.0.x
-    - name: Restore dependencies
-      run: dotnet restore
+      - uses: actions/checkout@v3
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Test
+        run: dotnet test --no-build --verbosity normal
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Publish Docker Image
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/mpcalchub-personal:latest
 
-    - name: Build
-      run: dotnet build --no-restore
+  deploy:
+    runs-on: self-hosted
+    needs: build
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Test
-      run: dotnet test --no-build --verbosity normal
-    
-    - name: Log in to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}  
-
-    - name: Publish Docker Image
-      uses: docker/build-push-action@v3
-      with:
-        context: .
-        file: ./Dockerfile
-        push: true
-        tags: ${{ secrets.DOCKERHUB_USERNAME }}/mpcalchub-personal:latest
+      - name: Atualizar arquivos do Kubernetes
+        run: |
+          kubectl apply -f ./src/k8s/deployment.yml
+          kubectl apply -f ./src/k8s/service.yml

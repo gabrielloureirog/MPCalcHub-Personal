@@ -1,0 +1,32 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mpcalc-config
+data:
+  appsettings.json: |
+    {
+      "ConnectionStrings": {
+        "SQLConnection": "Server=sqlserver-service,1433;Database=MPCalcDB;User Id=sa;Password=@fiap2024;TrustServerCertificate=True;"
+      },
+      "Logging": {
+        "LogLevel": {
+          "Default": "Information",
+          "Microsoft.AspNetCore": "Warning"
+        }
+      },
+      "AllowedHosts": "*",
+      "Token": {
+        "Key": "ZyoDeRMGvdsb1UOLu+quUWQnMHu5RgdnJeLcoSGNjFA=",
+        "ExpirationTimeHour": 5,
+        "IncreaseExpirationTimeMinutes": 20
+      },
+      "RabbitMQ": {
+        "HostName": "rabbitmq-service",
+        "UserName": "guest",
+        "Password": "guest",
+        "VirtualHost": "/",
+        "Port": 5672,
+        "DefaultExchangeName": "topic_exchange",
+        "DefaultExchangeType": "topic"
+      }
+    }
