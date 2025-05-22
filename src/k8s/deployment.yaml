@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: mpcalc-register-producer
-        image: mpcalc-register-producer:latest
-        imagePullPolicy: Never
+        image: gabrielloureirog/mpcalchub-personal:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
         envFrom:
